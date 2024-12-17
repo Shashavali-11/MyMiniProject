@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Details</title>
+    <style>
+  
+  /* General Styling */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/1600x900/?cinema,movies'); */
+    background-image: url("movieimg.webp");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #fff;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInBackground 3s ease-in-out;
+  }
+
+  @keyframes fadeInBackground {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Input and Button Styling */
+  #ip1 {
+    padding: 12px;
+    width: 300px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: border 0.3s ease-in-out, background-color 0.3s ease;
+  }
+
+  #ip1:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  #btn {
+    padding: 12px 24px;
+    margin-left: 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  #btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+  }
+
+  /* Parent Container Styling */
+  #parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  /* Movie Card Styling */
+  #parent > div {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    width: 300px;
+    padding: 20px;
+    text-align: left;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    animation: slideUp 0.8s ease-in-out;
+    backdrop-filter: blur(10px);
+  }
+
+  #parent > div:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Image Styling */
+  #parent img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  #parent img:hover {
+    transform: scale(1.05);
+  }
+
+  /* Text Styling */
+  #parent p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #fff;
+  }
+
+  #parent p b {
+    /* color: #007bff; */
+    color: black;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    #ip1 {
+      width: 80%;
+    }
+
+    #btn {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+
+    #parent > div {
+      width: 90%;
+    }
+  }
+</style>
+
+  
+  </head>
+  <body>
+    <h2>Movie Details</h2>
+    <input type="text" id="ip1" placeholder="Movie Name..." />
+    <button id="btn">Search</button>
+    <div id="parent"></div>
+
+    <script>
+      let input = document.getElementById("ip1");
+      let button = document.getElementById("btn");
+      let parent = document.getElementById("parent");
+
+      button.addEventListener("click", () => {
+        
+
+        let query = input.value;
+
+        if(query > 0 || query < 0){
+          alert(`${query} is not a valid input!`)
+        }else if(query) {
+          movie(query);
+        }else{
+          alert("please fill the input")
+        }
+      });
+      input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        button.click();
+      }
+    });
+
+      async function movie(inpdata) {
+        input.style.display = "none"
+        button.style.display = "none"
+        parent.innerHTML = "";
+
+        let url = `https://www.omdbapi.com/?t=${inpdata}&apikey=76d079f0`;
+
+        let apidata = await fetch(url);
+
+        let data = await apidata.json();
+        console.log(data);
+
+        let child = document.createElement("div");
+        let heading = document.createElement("p");
+        let imgdata = document.createElement("img");
+        let actors = document.createElement("p");
+        let country = document.createElement("p");
+        let released = document.createElement("p");
+        let collections = document.createElement("p");
+
+        heading.innerHTML = `<b>Title :</b> <i>${data.Title}</i>`;
+        imgdata.src = data.Poster;
+        actors.innerHTML = `<b>Actors : </b>${data.Actors}`;
+        country.innerHTML = `<b>Country : </b> ${data.Country}`;
+        released.innerHTML = `<b>Released Date : </b>${data.Released}`;
+        collections.innerHTML = `<b>Collections : </b>${data.BoxOffice}`;
+
+        parent.appendChild(child);
+        child.append(heading);
+        child.append(imgdata);
+        child.append(actors);
+        child.append(country);
+        child.append(released);
+        child.append(collections);
+      }
+    </script>
+  </body>
+</html>
